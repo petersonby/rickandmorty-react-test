@@ -1,6 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react';
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { useDispatch, useSelector } from 'react-redux';
+import { requestCharacters } from '../redux/actions';
 
 const StyledList = styled.ul`
   list-style: none;
@@ -25,67 +27,58 @@ const StyledList = styled.ul`
 `;
 
 export default function ListOfCharacters() {
-  const [characters, setCharacters] = useState([]);
+  const dispatch = useDispatch();
+  const loading = useSelector(state => state.loading);
+  const characters = useSelector(state => state.characters);
+
   const [loader, setLoader] = useState(null);
-  const [loading, setLoading] = useState(false);
   const page = useRef(1);
   const pageLoaderY = useRef(0);
-
+  
   const options = {
     root: null,
     rootMargin: "0px",
     threshold: 1.0
   };
-
+  
   const handleObserver = ([entry]) => {
     const y = entry.boundingClientRect.y;
     
     if (pageLoaderY.current > y) {
       page.current++;
-      fetchData(page.current);
+      dispatch(requestCharacters(page.current));
     }
-
+    
     pageLoaderY.current = y;
   }
-
+  
   const observer = useRef(new IntersectionObserver (
     handleObserver,
     options
   ));
-
-  const fetchData = async (page) => {
-    setLoading(true);
-
-    const response = await fetch(
-      `https://rickandmortyapi.com/api/character/?page=${page}`
-    );
-
-    if (response.ok) {
-      setLoading(false);
-      let json = await response.json();
-
-      setCharacters(prevCharacters => [...prevCharacters, ...json.results]);
-    }
-  };
-
+    
   useEffect(() => {
-    fetchData(page.current);
+    dispatch(requestCharacters(page.current));
   },[]);
-
+  
   useEffect(() => {
     const currentLoader = loader;
     const currentObserver = observer.current;
-
+    
     if(currentLoader) {
       currentObserver.observe(currentLoader); 
     }
-
+    
     return () => {
       if (currentLoader) {
         currentObserver.unobserve(currentLoader);
       }
     };
   }, [loader]);
+
+  if(!characters.length) {
+    return <p>no posts</p>
+  }
 
   return (
     <>
