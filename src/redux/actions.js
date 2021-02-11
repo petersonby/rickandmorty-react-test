@@ -1,4 +1,4 @@
-import { HIDE_LOADER, SHOW_LOADER, FETCH_CHARACTERS, REQUEST_CHARACTERS, PAGES_NUM } from "./types";
+import { HIDE_LOADER, SHOW_LOADER, FETCH_CHARACTERS, REQUEST_CHARACTERS, PAGES_NUM, INCREMENT_NUM, FETCH_SINGLE_CHARACTER, REQUEST_SINGLE_CHARACTER } from "./types";
 
 export function showLoader() {
   return {
@@ -12,10 +12,15 @@ export function hideLoader() {
   }
 }
 
-export function requestCharacters(page) {
+export function requestCharacters() {
   return {
-    type: REQUEST_CHARACTERS,
-    payload: page
+    type: REQUEST_CHARACTERS
+  }
+}
+
+export function incrementPage() {
+  return {
+    type: INCREMENT_NUM
   }
 }
 
@@ -23,6 +28,20 @@ export function fetchCharacters(characters) {
   return {
     type: FETCH_CHARACTERS,
     payload: characters
+  }
+}
+
+export function requestSingleCharacter(id) {
+  return {
+    type: REQUEST_SINGLE_CHARACTER,
+    payload: id
+  }
+}
+
+export function fetchSingleCharacter(character) {
+  return {
+    type: FETCH_SINGLE_CHARACTER,
+    payload: character
   }
 }
 

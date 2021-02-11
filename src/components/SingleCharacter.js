@@ -1,29 +1,22 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { requestSingleCharacter } from '../redux/actions';
 
 export default function SingleCharacter({ match }) {
-  const [character, setCharacter] = useState({});
+  const dispatch = useDispatch();
+  const character = useSelector(state => state.singleCharacter)[0];
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch(
-        `https://rickandmortyapi.com/api/character/${match.params.id}`
-      );
-  
-      if (response.ok) {
-        let json = await response.json();
+    dispatch(requestSingleCharacter(match.params.id));
+  },[]);
 
-        setCharacter(json);
-      } else {
-        alert("Ошибка HTTP: " + response.status);
-      }
-    };
- 
-    fetchData();
-  }, [match.params.id]);
+  if(!character) {
+    return <p>Not Found</p>
+  }
 
   return (
-    <>
+    <div>
       <div><Link to="/">Back to List</Link></div>
 
       <img src={character.image} />
@@ -31,13 +24,12 @@ export default function SingleCharacter({ match }) {
       <p>Status: {character.status}</p>
       <p>Species: {character.species}</p>
       <p>Gender: {character.gender}</p>
-      {/* <p>Location name: {character.location.name}</p> */}
       <p>created {character.created}</p>
 
-      {/* <div>Episodes List:</div>
+      <div>Episodes List:</div>
       <ul>
         {character.episode.map((episode, i) => (<li key={i}><a href={episode}>{episode}</a></li>))}
-      </ul> */}
-    </>
+      </ul>
+    </div>
   );
 }

@@ -32,7 +32,6 @@ export default function ListOfCharacters() {
   const characters = useSelector(state => state.characters);
 
   const [loader, setLoader] = useState(null);
-  const page = useRef(1);
   const pageLoaderY = useRef(0);
   
   const options = {
@@ -45,8 +44,7 @@ export default function ListOfCharacters() {
     const y = entry.boundingClientRect.y;
     
     if (pageLoaderY.current > y) {
-      page.current++;
-      dispatch(requestCharacters(page.current));
+      dispatch(requestCharacters());
     }
     
     pageLoaderY.current = y;
@@ -58,7 +56,7 @@ export default function ListOfCharacters() {
   ));
     
   useEffect(() => {
-    dispatch(requestCharacters(page.current));
+    dispatch(requestCharacters());
   },[]);
   
   useEffect(() => {
